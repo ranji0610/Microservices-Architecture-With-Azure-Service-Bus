@@ -1,3 +1,4 @@
+using Duende.IdentityServer.Services;
 using Mango.Services.Identity.Initializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Mirchi.Services.Identity;
 using Mirchi.Services.Identity.DBContexts;
 using Mirchi.Services.Identity.Initialiser;
 using Mirchi.Services.Identity.Models;
+using Mirchi.Services.Identity.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +22,12 @@ var b = builder.Services.AddIdentityServer(options =>
     options.Events.RaiseSuccessEvents = true;
     options.Events.RaiseFailureEvents = true;
     options.EmitStaticAudienceClaim = true;
-}).AddInMemoryIdentityResources(SD.IdentityResources).AddInMemoryApiScopes(SD.ApiScopes).AddInMemoryClients(SD.Clients).AddAspNetIdentity<ApplicationUser>();
+}).AddInMemoryIdentityResources(SD.IdentityResources)
+.AddInMemoryApiScopes(SD.ApiScopes)
+.AddInMemoryClients(SD.Clients)
+.AddAspNetIdentity<ApplicationUser>();
 builder.Services.AddScoped<IDbInitialiser, DbInitialiser>();
-
+builder.Services.AddScoped<IProfileService, ProfileService>();
 b.AddDeveloperSigningCredential();
 var app = builder.Build();
 

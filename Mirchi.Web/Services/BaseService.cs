@@ -36,6 +36,10 @@ namespace Mirchi.Web.Services
                     httpRequestMessage.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), Encoding.UTF8, "application/json");
                 }
 
+                if(!string.IsNullOrWhiteSpace(apiRequest.AccessToken)) {
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiRequest.AccessToken);   
+                }
+
                 HttpResponseMessage httpResponseMessage = null;
                 switch (apiRequest.ApiType)
                 {

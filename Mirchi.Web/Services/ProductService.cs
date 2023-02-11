@@ -11,55 +11,55 @@ namespace Mirchi.Web.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<T> CreateProductAsync<T>(ProductDto productDto)
+        public async Task<T> CreateProductAsync<T>(ProductDto productDto, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.POST,
                 Data = productDto,
                 ApiUrl = SD.ProductAPIBase + "api/products",
-                AccessToken = string.Empty
+                AccessToken = token
             });
         }
 
-        public async Task<T> DeleteProductAsync<T>(int productId)
+        public async Task<T> DeleteProductAsync<T>(int productId, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.DELETE,
                 ApiUrl = SD.ProductAPIBase + "api/products/" + productId,
-                AccessToken = string.Empty
+                AccessToken = token
             });
         }
 
-        public async Task<T> GetAllProductsAsync<T>()
+        public async Task<T> GetAllProductsAsync<T>(string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.GET,
                 ApiUrl = SD.ProductAPIBase + "api/products",
-                AccessToken = string.Empty
+                AccessToken = token
             });
         }
 
-        public async Task<T> GetProductByIdAsync<T>(int productId)
+        public async Task<T> GetProductByIdAsync<T>(int productId, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.GET,
                 ApiUrl = SD.ProductAPIBase + "api/products/" + productId,
-                AccessToken = string.Empty
+                AccessToken = token
             });
         }
 
-        public async Task<T> UpdateProductAsync<T>(ProductDto productDto)
+        public async Task<T> UpdateProductAsync<T>(ProductDto productDto, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.PUT,
                 Data = productDto,
                 ApiUrl = SD.ProductAPIBase + "api/products",
-                AccessToken = string.Empty
+                AccessToken = token
             });
         }
     }

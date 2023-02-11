@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Mirchi.Services.ProductAPI.Models.DTOs;
 using Mirchi.Services.ProductAPI.Repositories;
 
@@ -17,6 +18,7 @@ namespace Mirchi.Services.ProductAPI.Controllers
             _response = new ResponseDTO();
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<object> Get()
         {
@@ -34,6 +36,7 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("{productId}")]
         public async Task<object> Get(int productId)
@@ -52,6 +55,7 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<object> Post([FromBody] ProductDTO productDTO)
         {
@@ -68,6 +72,7 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<object> Put([FromBody] ProductDTO productDTO)
         {
@@ -84,6 +89,7 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("{productId}")]
         public async Task<object> Delete(int productId)
