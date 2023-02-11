@@ -1,23 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mirchi.Web.Models
+namespace Mirchi.Services.ShoppingCartAPI.Models
 {
-    public class ProductDto
+    public class Product
     {
-        public ProductDto()
-        {
-            Count = 1;
-        }
-        public int ProductId { get; set; }   
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int ProductId { get; set; }
+
+        [Required]
         public string Name { get; set; }
-     
+
+        [Range(1,1000)]
         public double Price { get; set; }
 
         public string Description { get; set; }
         public string CategoryName { get; set; }
         public string ImageUrl { get; set; }
-
-        [Range(1, 100)]
-        public int Count { get; set; }
     }
 }

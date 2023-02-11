@@ -1,49 +1,31 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Mirchi.Services.ProductAPI.Models.DTOs;
-using Mirchi.Services.ProductAPI.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+using Mirchi.Services.ShoppingCartAPI.Models;
+using Mirchi.Services.ShoppingCartAPI.Models.DTOs;
+using Mirchi.Services.ShoppingCartAPI.Repositories;
 
-namespace Mirchi.Services.ProductAPI.Controllers
+namespace Mirchi.Services.ShoppingCartAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class CartController : ControllerBase
     {
+        private readonly ICartRepository _cartRepository;
         protected ResponseDTO _response;
 
-        private readonly IProductRepository _productRepository;
-        public ProductsController(IProductRepository productRepository)
+        public CartController(ICartRepository cartRepository)
         {
-            _productRepository = productRepository;
+            _cartRepository = cartRepository;
             _response = new ResponseDTO();
         }
 
-        
         [HttpGet]
-        public async Task<object> Get()
+        [Route("GetCart/{userId}")]
+        public async Task<object> GetCart(string userId)
         {
             try
             {
-                var products = await _productRepository.GetProducts();
-                _response.Result = products;
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { ex.ToString() };
-            }
-
-            return _response;
-        }
-        
-        [HttpGet]
-        [Route("{productId}")]
-        public async Task<object> Get(int productId)
-        {
-            try
-            {
-                var product = await _productRepository.GetProductById(productId);
-                _response.Result = product;
+                var cart = await _cartRepository.GetCartByUserId(userId);
+                _response.Result = cart;
             }
             catch (Exception ex)
             {
@@ -54,13 +36,14 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<object> Post([FromBody] ProductDTO productDTO)
+        [Route("addcart")]
+        public async Task<object> AddCart(CartDTO cartDTO)
         {
             try
             {
-                _response.Result = await _productRepository.CreateUpdateProduct(productDTO);                
+                var cart = await _cartRepository.CreateUpdateCart(cartDTO);
+                _response.Result = cart;
             }
             catch (Exception ex)
             {
@@ -71,13 +54,14 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
-        [Authorize]
-        [HttpPut]
-        public async Task<object> Put([FromBody] ProductDTO productDTO)
+        [HttpPost]
+        [Route("updatecart")]
+        public async Task<object> UpdateCart(CartDTO cartDTO)
         {
             try
             {
-                _response.Result = await _productRepository.CreateUpdateProduct(productDTO);
+                var cart = await _cartRepository.CreateUpdateCart(cartDTO);
+                _response.Result = cart;
             }
             catch (Exception ex)
             {
@@ -88,14 +72,32 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpDelete]
-        [Route("{productId}")]
-        public async Task<object> Delete(int productId)
+        [HttpPost]
+        [Route("removecart")]
+        public async Task<object> RemoveCart([FromBody]int cartDetailsId)
         {
             try
             {
-                _response.Result = await _productRepository.DeleteProduct(productId);
+                bool isSuccess = await _cartRepository.RemoveFromCart(cartDetailsId);
+                _response.Result = isSuccess;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpPost]
+        [Route("clearcart")]
+        public async Task<object> ClearCart([FromBody] string userId)
+        {
+            try
+            {
+                bool isSuccess = await _cartRepository.ClearCart(userId);
+                _response.Result = isSuccess;
             }
             catch (Exception ex)
             {
@@ -106,5 +108,4 @@ namespace Mirchi.Services.ProductAPI.Controllers
             return _response;
         }
     }
-
 }

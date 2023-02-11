@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mirchi.Web.Models
+namespace Mirchi.Services.ShoppingCartAPI.Models.DTOs
 {
-    public class ProductDto
-    {
-        public ProductDto()
-        {
-            Count = 1;
-        }
+    public class ProductDTO
+    {        
         public int ProductId { get; set; }   
         public string Name { get; set; }
      
@@ -16,8 +12,5 @@ namespace Mirchi.Web.Models
         public string Description { get; set; }
         public string CategoryName { get; set; }
         public string ImageUrl { get; set; }
-
-        [Range(1, 100)]
-        public int Count { get; set; }
     }
 }

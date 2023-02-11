@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{3A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mirchi.Services.ProductAPI", "Mirchi.Services.ProductAPI\Mirchi.Services.ProductAPI.csproj", "{A34801E4-FFDE-4088-A6B5-2067A2E1A843}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirchi.Services.Identity", "Mirchi.Services.Identity\Mirchi.Services.Identity.csproj", "{CD91785A-335E-4C61-A395-52F8B8728BF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mirchi.Services.Identity", "Mirchi.Services.Identity\Mirchi.Services.Identity.csproj", "{CD91785A-335E-4C61-A395-52F8B8728BF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirchi.Services.ShoppingCartAPI", "Mirchi.Services.ShoppingCartAPI\Mirchi.Services.ShoppingCartAPI.csproj", "{9070EBEF-D006-436E-A234-FF8BF3200043}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{CD91785A-335E-4C61-A395-52F8B8728BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD91785A-335E-4C61-A395-52F8B8728BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD91785A-335E-4C61-A395-52F8B8728BF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9070EBEF-D006-436E-A234-FF8BF3200043}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9070EBEF-D006-436E-A234-FF8BF3200043}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9070EBEF-D006-436E-A234-FF8BF3200043}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9070EBEF-D006-436E-A234-FF8BF3200043}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 		{8297E725-B5B5-4EEA-B68E-BCDA81F41F2B} = {44DA034C-6B7A-4FA4-A8BD-023AB3392F19}
 		{A34801E4-FFDE-4088-A6B5-2067A2E1A843} = {3AFED42A-6AE6-47E7-A1E3-EE50316DE4AA}
 		{CD91785A-335E-4C61-A395-52F8B8728BF8} = {3AFED42A-6AE6-47E7-A1E3-EE50316DE4AA}
+		{9070EBEF-D006-436E-A234-FF8BF3200043} = {3AFED42A-6AE6-47E7-A1E3-EE50316DE4AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3FA56369-4B9E-4E1E-96A4-4F766AF87A5E}
