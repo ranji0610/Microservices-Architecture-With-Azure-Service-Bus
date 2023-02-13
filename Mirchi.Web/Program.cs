@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Mirchi.Web;
 using Mirchi.Web.Services;
 using Mirchi.Web.Services.IServices;
@@ -8,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IProductService, ProductService>();
 SD.ProductAPIBase = builder.Configuration["ServiceUrls:ProductAPI"];
+SD.ShoppingCartAPIBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Cookies";
@@ -23,6 +26,8 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = builder.Configuration["ClientId"];
     options.ClientSecret = "secret";
     options.ResponseType = "code";
+    options.ClaimActions.MapJsonKey("role", "role", "role");
+    options.ClaimActions.MapJsonKey("sub", "sub", "sub");
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
     options.Scope.Add("Mirchi");

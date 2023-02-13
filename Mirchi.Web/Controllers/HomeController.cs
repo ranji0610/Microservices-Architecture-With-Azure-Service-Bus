@@ -12,18 +12,20 @@ namespace Mirchi.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IProductService _productService;
+        private readonly ICartService _cartService;
 
-        public HomeController(ILogger<HomeController> logger, IProductService productService)
+        public HomeController(ILogger<HomeController> logger, IProductService productService, ICartService cartService)
         {
             _logger = logger;
             _productService = productService;
+            _cartService = cartService;
         }
 
         public async Task<IActionResult> Index()
         {
             List<ProductDto> products = new();
             var response = await _productService.GetAllProductsAsync<ResponseDTO>("");
-            if(response != null && response.IsSuccess)
+            if (response != null && response.IsSuccess)
             {
                 products = JsonConvert.DeserializeObject<List<ProductDto>>(JsonConvert.SerializeObject(response.Result));
             }
@@ -56,13 +58,48 @@ namespace Mirchi.Web.Controllers
 
         [Authorize]
         public IActionResult Login()
-        {            
+        {
             return RedirectToAction("Index");
         }
 
         public IActionResult Logout()
         {
-            return SignOut("Cookies","oidc");
+            return SignOut("Cookies", "oidc");
+        }
+
+        [HttpPost]
+        [ActionName("Details")]
+        [Authorize]
+        public async Task<IActionResult> DetailsPost(ProductDto productDto)
+        {
+            CartDTO cart = new();
+            CartHeaderDTO cartHeader = new()
+            {
+                UserId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value
+            };
+            CartDetailsDTO cartDetails = new()
+            {
+                Count = productDto.Count,
+                ProductId = productDto.ProductId
+            };
+            var response = await _productService.GetProductByIdAsync<ResponseDTO>(productDto.ProductId, string.Empty);
+            if (response != null && response.IsSuccess)
+            {
+                cartDetails.Product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
+            }
+            List<CartDetailsDTO> cartDetailsDTOs = new()
+            {
+                cartDetails
+            };
+            cart.CartDetails = cartDetailsDTOs;
+            cart.CartHeader = cartHeader;
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var addResponse = await _cartService.AddToCartAsync<ResponseDTO>(cart, accessToken);
+            if (addResponse != null && addResponse.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(productDto);
         }
     }
 }

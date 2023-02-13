@@ -11,6 +11,7 @@ namespace Mirchi.Services.ShoppingCartAPI
             var mappingConfig = new MapperConfiguration(config =>
             {
                 config.CreateMap<Product, ProductDTO>().ReverseMap();
+                config.CreateMap<Cart, CartDTO>().ReverseMap();
                 config.CreateMap<CartHeader, CartHeaderDTO>().ReverseMap();
                 config.CreateMap<CartDetails, CartDetailsDTO>().ReverseMap();
             });
