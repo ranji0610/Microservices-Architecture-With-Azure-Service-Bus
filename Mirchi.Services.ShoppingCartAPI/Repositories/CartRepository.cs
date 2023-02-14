@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Mirchi.Services.ShoppingCartAPI.DBContexts;
 using Mirchi.Services.ShoppingCartAPI.Models;
 using Mirchi.Services.ShoppingCartAPI.Models.DTOs;
@@ -15,6 +16,16 @@ namespace Mirchi.Services.ShoppingCartAPI.Repositories
         {
             _applicationDBContext = applicationDBContext;
             _mapper = mapper;
+        }
+
+        public async Task<bool> ApplyCoupon(string userId, string couponCode)
+        {
+            var cartHeaderFromDb = await _applicationDBContext.CartHeaders.FirstOrDefaultAsync(cartHeader => cartHeader.UserId == userId);
+            cartHeaderFromDb.CouponCode = couponCode;
+            _applicationDBContext.CartHeaders.Update(cartHeaderFromDb);
+            await _applicationDBContext.SaveChangesAsync();
+            return true;
+
         }
 
         public async Task<bool> ClearCart(string userId)
@@ -92,6 +103,15 @@ namespace Mirchi.Services.ShoppingCartAPI.Repositories
             return _mapper.Map<CartDTO>(cart);
 
 
+        }
+
+        public async Task<bool> RemoveCoupon(string userId)
+        {
+            var cartHeaderFromDb = await _applicationDBContext.CartHeaders.FirstOrDefaultAsync(cartHeader => cartHeader.UserId == userId);
+            cartHeaderFromDb.CouponCode = string.Empty;
+            _applicationDBContext.CartHeaders.Update(cartHeaderFromDb);
+            await _applicationDBContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> RemoveFromCart(int cartDetailsId)

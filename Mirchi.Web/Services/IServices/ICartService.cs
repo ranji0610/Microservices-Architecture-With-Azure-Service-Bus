@@ -11,5 +11,9 @@ namespace Mirchi.Web.Services.IServices
         Task<T> UpdateCartAsync<T>(CartDTO cartDTO, string token = null);
 
         Task<T> RemoveFromCartAsync<T>(int cartDetailsId, string token = null);
+
+        Task<T> ApplyCouponAsync<T>(CartDTO cartDTO, string token = null);
+
+        Task<T> RemoveCouponAsync<T>(string userId, string token = null);
     }
 }

@@ -22,12 +22,34 @@ namespace Mirchi.Web.Services
             });
         }
 
+        public async Task<T> ApplyCouponAsync<T>(CartDTO cartDTO, string token = null)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = cartDTO,
+                ApiUrl = SD.ShoppingCartAPIBase + "api/cart/applycoupon",
+                AccessToken = token
+            });
+        }
+
         public async Task<T> GetCartByUserIdAsync<T>(string userId, string token = null)
         {
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.GET,
                 ApiUrl = SD.ShoppingCartAPIBase + "api/cart/GetCart/" + userId,
+                AccessToken = token
+            });
+        }
+
+        public async Task<T> RemoveCouponAsync<T>(string userId, string token = null)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = userId,
+                ApiUrl = SD.ShoppingCartAPIBase + "api/cart/removecoupon",
                 AccessToken = token
             });
         }
