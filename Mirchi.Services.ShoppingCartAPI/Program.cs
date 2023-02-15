@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Mirchi.MessageBus;
 using Mirchi.Services.ShoppingCartAPI;
 using Mirchi.Services.ShoppingCartAPI.DBContexts;
 using Mirchi.Services.ShoppingCartAPI.Repositories;
@@ -14,6 +15,7 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<ICartRepository, CartRepository>();
+builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
 {

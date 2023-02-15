@@ -30,6 +30,27 @@ namespace Mirchi.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Checkout(CartDTO cartDTO)
+        {
+            try
+            {
+                var userId = User.Claims.Where(claim => claim.Type == "sub")?.FirstOrDefault()?.Value;
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response = await _cartService.Checkout<ResponseDTO>(cartDTO.CartHeader, accessToken);
+                return RedirectToAction("Confirmation");
+            }
+            catch(Exception)
+            {
+                return View(cartDTO);
+            }
+        }
+
+        public async Task<IActionResult> Confirmation()
+        {
+            return View();
+        }
+
+        [HttpPost]
         [ActionName("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon(CartDTO cartDTO)
         {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Mirchi.MessageBus;
+using Mirchi.Services.ShoppingCartAPI.Messages;
 using Mirchi.Services.ShoppingCartAPI.Models;
 using Mirchi.Services.ShoppingCartAPI.Models.DTOs;
 using Mirchi.Services.ShoppingCartAPI.Repositories;
@@ -11,11 +13,13 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
     {
         private readonly ICartRepository _cartRepository;
         protected ResponseDTO _response;
+        private readonly IMessageBus _messageBus;
 
-        public CartAPIController(ICartRepository cartRepository)
+        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus)
         {
             _cartRepository = cartRepository;
             _response = new ResponseDTO();
+            _messageBus = messageBus;
         }
 
         [HttpGet]
@@ -134,6 +138,31 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
             {
                 bool isSuccess = await _cartRepository.RemoveCoupon(userId);
                 _response.Result = isSuccess;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpPost]
+        [Route("checkout")]
+        public async Task<object> Checkout(CheckoutHeaderDto checkoutHeader)
+        {
+            try
+            {
+                CartDTO cart = await _cartRepository.GetCartByUserId(checkoutHeader.UserId);
+                if(cart == null)
+                {
+                    return BadRequest();
+                }
+                checkoutHeader.CartDetails = cart.CartDetails;
+                await _messageBus.PublishMessage(checkoutHeader, "checkoutmessage");
+                //bool isSuccess = await _cartRepository.Checkout(checkoutHeader);
+                //_response.Result = isSuccess;
             }
             catch (Exception ex)
             {

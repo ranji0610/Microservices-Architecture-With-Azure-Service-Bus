@@ -33,6 +33,17 @@ namespace Mirchi.Web.Services
             });
         }
 
+        public async Task<T> Checkout<T>(CartHeaderDTO cartHeader, string token = null)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = cartHeader,
+                ApiUrl = SD.ShoppingCartAPIBase + "api/cart/checkout",
+                AccessToken = token
+            });
+        }
+
         public async Task<T> GetCartByUserIdAsync<T>(string userId, string token = null)
         {
             return await SendAsync<T>(new ApiRequest()
