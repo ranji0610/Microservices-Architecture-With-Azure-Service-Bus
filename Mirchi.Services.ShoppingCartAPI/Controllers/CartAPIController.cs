@@ -14,12 +14,14 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
         private readonly ICartRepository _cartRepository;
         protected ResponseDTO _response;
         private readonly IMessageBus _messageBus;
+        private readonly ICouponRepository _couponRepository;
 
-        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus)
+        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository)
         {
             _cartRepository = cartRepository;
             _response = new ResponseDTO();
             _messageBus = messageBus;
+            _couponRepository = couponRepository;
         }
 
         [HttpGet]
@@ -158,6 +160,18 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
                 if(cart == null)
                 {
                     return BadRequest();
+                }
+
+                if(!string.IsNullOrWhiteSpace(checkoutHeader.CouponCode))
+                {
+                    var coupon = await _couponRepository.GetCouponAsync(checkoutHeader.CouponCode);
+                    if(coupon != null && checkoutHeader.DiscountTotal != coupon.DiscountAmount)
+                    {
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string> { "Coupon price has change , please confirm" };
+                        _response.DisplayMessage = "Coupon price has change , please confirm";
+                        return _response;
+                    }
                 }
                 checkoutHeader.CartDetails = cart.CartDetails;
                 await _messageBus.PublishMessage(checkoutHeader, "checkoutmessage");

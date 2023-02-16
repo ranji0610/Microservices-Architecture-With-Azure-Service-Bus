@@ -37,9 +37,14 @@ namespace Mirchi.Web.Controllers
                 var userId = User.Claims.Where(claim => claim.Type == "sub")?.FirstOrDefault()?.Value;
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
                 var response = await _cartService.Checkout<ResponseDTO>(cartDTO.CartHeader, accessToken);
+                if (response != null && !response.IsSuccess)
+                {
+                    TempData["Error"] = response.DisplayMessage;
+                    return RedirectToAction(nameof(Checkout));
+                }
                 return RedirectToAction("Confirmation");
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return View(cartDTO);
             }
@@ -57,7 +62,7 @@ namespace Mirchi.Web.Controllers
             var userId = User.Claims.Where(claim => claim.Type == "sub")?.FirstOrDefault()?.Value;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var response = await _cartService.ApplyCouponAsync<ResponseDTO>(cartDTO, accessToken);
-            if(response != null && response.IsSuccess)
+            if (response != null && response.IsSuccess)
             {
                 return RedirectToAction("Index");
             }
@@ -83,7 +88,7 @@ namespace Mirchi.Web.Controllers
             var userId = User.Claims.Where(claim => claim.Type == "sub")?.FirstOrDefault()?.Value;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var response = await _cartService.RemoveFromCartAsync<ResponseDTO>(cartDetailsId, accessToken);
-            
+
             if (response != null && response.IsSuccess)
             {
                 return RedirectToAction("Index");
@@ -102,14 +107,14 @@ namespace Mirchi.Web.Controllers
                 cartDTO = JsonConvert.DeserializeObject<CartDTO>(Convert.ToString(response.Result));
             }
 
-            if(cartDTO.CartHeader != null)
+            if (cartDTO.CartHeader != null)
             {
                 if (!string.IsNullOrWhiteSpace(cartDTO.CartHeader.CouponCode))
                 {
                     var couponResponse = await _couponService.GetCouponAsync<ResponseDTO>(cartDTO.CartHeader.CouponCode, accessToken);
                     if (couponResponse != null && couponResponse.IsSuccess)
                     {
-                        var coupon = JsonConvert.DeserializeObject<CouponDTO>(Convert.ToString(couponResponse.Result));
+                        var coupon = JsonConvert.DeserializeObject<CouponDTO>(Convert.ToString(couponResponse.Result));                        
                         cartDTO.CartHeader.DiscountTotal = coupon.DiscountAmount;
                     }
                 }
@@ -118,7 +123,7 @@ namespace Mirchi.Web.Controllers
                     cartDTO.CartHeader.OrderTotal += (item.Product.Price * item.Count);
                 });
 
-                cartDTO.CartHeader.OrderTotal -= cartDTO.CartHeader.DiscountTotal; 
+                cartDTO.CartHeader.OrderTotal -= cartDTO.CartHeader.DiscountTotal;
             }
 
             return cartDTO;
