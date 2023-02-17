@@ -34,7 +34,7 @@ namespace Mirchi.Services.OrderAPI.Messaging
             CheckoutSubscriptionName = _configuration.GetValue<string>("CheckoutSubscriptionName");
             OrderPaymentTopicName = _configuration.GetValue<string>("OrderPaymentTopicName");            
             var client = new ServiceBusClient(ServiceBusConnectionString);
-            checkoutProcessor = client.CreateProcessor(CheckoutMessageTopic,CheckoutSubscriptionName);
+            checkoutProcessor = client.CreateProcessor(CheckoutMessageTopic);
             OrderPaymentResultTopicName = _configuration.GetValue<string>("OrderPaymentResultTopicName");
             OrderPaymentResultSubscriptionName = _configuration.GetValue<string>("OrderPaymentResultSubscriptionName");
             ServiceBusConnectionStringForOrderPaymentResultTopic = _configuration.GetValue<string>("ServiceBusConnectionStringForOrderPaymentResultTopic");
@@ -118,7 +118,8 @@ namespace Mirchi.Services.OrderAPI.Messaging
                 OrderId = orderHeader.OrderHeaderId,
                 CVV = orderHeader.CVV,
                 ExpiryMonthYear = orderHeader.ExpiryMonthYear,
-                OrderTotal = orderHeader.OrderTotal
+                OrderTotal = orderHeader.OrderTotal,
+                Email = orderHeader.Email
             };
 
             try

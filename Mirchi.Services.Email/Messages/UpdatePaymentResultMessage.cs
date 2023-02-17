@@ -1,4 +1,4 @@
-﻿namespace Mirchi.Services.OrderAPI.Messages
+﻿namespace Mirchi.Services.Email.Messages
 {
     public class UpdatePaymentResultMessage
     {

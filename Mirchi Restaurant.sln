@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor", "Payment
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirchi.Services.PaymentAPI", "Mirchi.Services.PaymentAPI\Mirchi.Services.PaymentAPI.csproj", "{B372E0A8-100B-4045-8963-8495DE7D9EF2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirchi.Services.Email", "Mirchi.Services.Email\Mirchi.Services.Email.csproj", "{B01B327F-C81C-4C0F-87EB-8A4AA0511495}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{B372E0A8-100B-4045-8963-8495DE7D9EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B372E0A8-100B-4045-8963-8495DE7D9EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B372E0A8-100B-4045-8963-8495DE7D9EF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B01B327F-C81C-4C0F-87EB-8A4AA0511495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01B327F-C81C-4C0F-87EB-8A4AA0511495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B01B327F-C81C-4C0F-87EB-8A4AA0511495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B01B327F-C81C-4C0F-87EB-8A4AA0511495}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{1D91D7D4-7461-422D-B1C7-FB4F1A01204E} = {3AFED42A-6AE6-47E7-A1E3-EE50316DE4AA}
 		{90032161-46C6-4F08-8CC6-9DB3AC57E9B3} = {EBA017F8-AC88-4F28-89F6-6E16FF3D6E02}
 		{B372E0A8-100B-4045-8963-8495DE7D9EF2} = {3AFED42A-6AE6-47E7-A1E3-EE50316DE4AA}
+		{B01B327F-C81C-4C0F-87EB-8A4AA0511495} = {3AFED42A-6AE6-47E7-A1E3-EE50316DE4AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3FA56369-4B9E-4E1E-96A4-4F766AF87A5E}

@@ -176,8 +176,9 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
                     }
                 }
                 checkoutHeader.CartDetails = cart.CartDetails;
-                var connectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
-                await _messageBus.PublishMessage(checkoutHeader, "checkoutmessage", connectionString);
+                //var connectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+                var connectionString = _configuration.GetValue<string>("ServiceBusConnectionStringForQueue");
+                await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue", connectionString);
                 await _cartRepository.ClearCart(checkoutHeader.UserId);                
             }
             catch (Exception ex)

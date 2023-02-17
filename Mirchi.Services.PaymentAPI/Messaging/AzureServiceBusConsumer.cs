@@ -54,7 +54,8 @@ namespace Mirchi.Services.PaymentAPI.Messaging
             UpdatePaymentResultMessage updatePaymentResultMessage = new()
             {
                 Status = result,
-                OrderId = paymentObj.OrderId
+                OrderId = paymentObj.OrderId,
+                Email = paymentObj.Email
             };
 
             try
