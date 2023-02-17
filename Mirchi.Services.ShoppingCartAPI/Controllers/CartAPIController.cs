@@ -15,13 +15,15 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
         protected ResponseDTO _response;
         private readonly IMessageBus _messageBus;
         private readonly ICouponRepository _couponRepository;
+        private readonly IConfiguration _configuration;
 
-        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository)
+        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository, IConfiguration configuration)
         {
             _cartRepository = cartRepository;
             _response = new ResponseDTO();
             _messageBus = messageBus;
             _couponRepository = couponRepository;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -174,9 +176,9 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
                     }
                 }
                 checkoutHeader.CartDetails = cart.CartDetails;
-                await _messageBus.PublishMessage(checkoutHeader, "checkoutmessage");
-                //bool isSuccess = await _cartRepository.Checkout(checkoutHeader);
-                //_response.Result = isSuccess;
+                var connectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+                await _messageBus.PublishMessage(checkoutHeader, "checkoutmessage", connectionString);
+                await _cartRepository.ClearCart(checkoutHeader.UserId);                
             }
             catch (Exception ex)
             {

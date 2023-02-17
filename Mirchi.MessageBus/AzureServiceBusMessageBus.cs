@@ -5,9 +5,8 @@ using System.Text;
 namespace Mirchi.MessageBus
 {
     public class AzureServiceBusMessageBus : IMessageBus
-    {
-        private readonly string connectionString = "Endpoint=sb://mirchirestaurant.servicebus.windows.net/;SharedAccessKeyName=default;SharedAccessKey=oPXcymqutuV3tuC/zdKrfmWUbDN/VnNYU+ASbJLdb2s=;";
-        public async Task PublishMessage(BaseMessage message, string topicName)
+    {        
+        public async Task PublishMessage(BaseMessage message, string topicName, string connectionString)
         {
             await using var client = new ServiceBusClient(connectionString);
             ServiceBusSender serviceBusSender = client.CreateSender(topicName);            

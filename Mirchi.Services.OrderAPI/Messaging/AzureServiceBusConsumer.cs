@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Mirchi.MessageBus;
 using Mirchi.Services.OrderAPI.Messages;
 using Mirchi.Services.OrderAPI.Models;
 using Mirchi.Services.OrderAPI.Repositories;
@@ -15,16 +16,30 @@ namespace Mirchi.Services.OrderAPI.Messaging
         private readonly string CheckoutSubscriptionName;
         private readonly IConfiguration _configuration;
         private ServiceBusProcessor checkoutProcessor;
+        private readonly IMessageBus _messageBus;
+        private readonly string OrderPaymentTopicName;
+        private readonly string OrderPaymentResultTopicName;
+        private readonly string OrderPaymentResultSubscriptionName;
+        private readonly string ServiceBusConnectionStringForOrderPaymentResultTopic;
+        private ServiceBusProcessor OrderServiceBusProcessor;
 
-        public AzureServiceBusConsumer(IOrderRepository orderRepository, IConfiguration configuration)
+        public AzureServiceBusConsumer(IOrderRepository orderRepository, IConfiguration configuration
+            ,IMessageBus messageBus)
         {
             _orderRepository = orderRepository;
             _configuration = configuration;
+            _messageBus = messageBus;
             ServiceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
             CheckoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
             CheckoutSubscriptionName = _configuration.GetValue<string>("CheckoutSubscriptionName");
+            OrderPaymentTopicName = _configuration.GetValue<string>("OrderPaymentTopicName");            
             var client = new ServiceBusClient(ServiceBusConnectionString);
             checkoutProcessor = client.CreateProcessor(CheckoutMessageTopic,CheckoutSubscriptionName);
+            OrderPaymentResultTopicName = _configuration.GetValue<string>("OrderPaymentResultTopicName");
+            OrderPaymentResultSubscriptionName = _configuration.GetValue<string>("OrderPaymentResultSubscriptionName");
+            ServiceBusConnectionStringForOrderPaymentResultTopic = _configuration.GetValue<string>("ServiceBusConnectionStringForOrderPaymentResultTopic");
+            var orderClient = new ServiceBusClient(ServiceBusConnectionStringForOrderPaymentResultTopic);
+            OrderServiceBusProcessor = orderClient.CreateProcessor(OrderPaymentResultTopicName, OrderPaymentResultSubscriptionName);
         }
 
         public async Task Start()
@@ -32,6 +47,19 @@ namespace Mirchi.Services.OrderAPI.Messaging
             checkoutProcessor.ProcessMessageAsync += OnCheckoutMessageReceived;
             checkoutProcessor.ProcessErrorAsync +=  ErrorHandler;
             await checkoutProcessor.StartProcessingAsync();
+
+            OrderServiceBusProcessor.ProcessMessageAsync += OnOrderPaymentUpdateMessageReceived;
+            OrderServiceBusProcessor.ProcessErrorAsync += ErrorHandler;
+            await OrderServiceBusProcessor.StartProcessingAsync();
+        }
+
+        private async Task OnOrderPaymentUpdateMessageReceived(ProcessMessageEventArgs arg)
+        {
+            var message = arg.Message;
+            var body = Encoding.UTF8.GetString(message.Body);
+            var updatePaymentResultMessage = JsonConvert.DeserializeObject<UpdatePaymentResultMessage>(body);
+            await _orderRepository.UpdateOrderPaymentStatus(updatePaymentResultMessage.OrderId, updatePaymentResultMessage.Status);
+            await arg.CompleteMessageAsync(arg.Message);
         }
 
         public async Task Stop()
@@ -82,6 +110,27 @@ namespace Mirchi.Services.OrderAPI.Messaging
             }
 
             await _orderRepository.AddOrder(orderHeader);
+
+            PaymentRequestMessage paymentRequestMessage = new()
+            {
+                Name = orderHeader.FirstName + " " + orderHeader.LastName,
+                CardNumber = orderHeader.CardNumber,
+                OrderId = orderHeader.OrderHeaderId,
+                CVV = orderHeader.CVV,
+                ExpiryMonthYear = orderHeader.ExpiryMonthYear,
+                OrderTotal = orderHeader.OrderTotal
+            };
+
+            try
+            {
+                var connectionString = _configuration.GetValue<string>("ServiceBusConnectionStringForOrderTopic");
+                await _messageBus.PublishMessage(paymentRequestMessage, OrderPaymentTopicName, connectionString);
+                await processMessageEventArgs.CompleteMessageAsync(message);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private Task ErrorHandler(ProcessErrorEventArgs processErrorEventArgs)

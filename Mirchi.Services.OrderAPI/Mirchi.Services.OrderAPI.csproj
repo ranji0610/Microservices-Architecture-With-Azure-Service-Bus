@@ -26,4 +26,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Mirchi.MessageBus\Mirchi.MessageBus.csproj" />
+  </ItemGroup>
+
 </Project>
