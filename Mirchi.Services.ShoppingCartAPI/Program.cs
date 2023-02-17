@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Mirchi.MessageBus;
 using Mirchi.Services.ShoppingCartAPI;
 using Mirchi.Services.ShoppingCartAPI.DBContexts;
+using Mirchi.Services.ShoppingCartAPI.RabbitMqSender;
 using Mirchi.Services.ShoppingCartAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+builder.Services.AddSingleton<IRabbitMqCartMessageSender, RabbitMqMessageSender>();
 builder.Services.AddControllers();
 builder.Services.AddHttpClient<ICouponRepository, CouponRepository>(u => u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CouponAPI"]));
 builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>

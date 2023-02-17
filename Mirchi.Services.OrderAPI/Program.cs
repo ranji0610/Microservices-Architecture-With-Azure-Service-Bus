@@ -4,6 +4,7 @@ using Mirchi.MessageBus;
 using Mirchi.Services.OrderAPI.DBContexts;
 using Mirchi.Services.OrderAPI.Extensions;
 using Mirchi.Services.OrderAPI.Messaging;
+using Mirchi.Services.OrderAPI.RabbitMqSender;
 using Mirchi.Services.OrderAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,9 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddSingleton<IOrderRepository>(new OrderRepository(optionBuilder.Options));
 builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
 builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+builder.Services.AddHostedService<RabbitMqCheckoutConsumer>();
+builder.Services.AddHostedService<RabbitMqPaymentConsumer>();
+builder.Services.AddSingleton<IRabbitMqOrderMessageSender, RabbitMqOrderMessageSender>();
 builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
 {

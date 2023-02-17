@@ -3,6 +3,7 @@ using Mirchi.MessageBus;
 using Mirchi.Services.ShoppingCartAPI.Messages;
 using Mirchi.Services.ShoppingCartAPI.Models;
 using Mirchi.Services.ShoppingCartAPI.Models.DTOs;
+using Mirchi.Services.ShoppingCartAPI.RabbitMqSender;
 using Mirchi.Services.ShoppingCartAPI.Repositories;
 
 namespace Mirchi.Services.ShoppingCartAPI.Controllers
@@ -16,14 +17,17 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
         private readonly IMessageBus _messageBus;
         private readonly ICouponRepository _couponRepository;
         private readonly IConfiguration _configuration;
+        private readonly IRabbitMqCartMessageSender _rabbitMqSender;
 
-        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository, IConfiguration configuration)
+        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository, IConfiguration configuration
+            , IRabbitMqCartMessageSender rabbitMqCartMessageSender)
         {
             _cartRepository = cartRepository;
             _response = new ResponseDTO();
             _messageBus = messageBus;
             _couponRepository = couponRepository;
             _configuration = configuration;
+            _rabbitMqSender= rabbitMqCartMessageSender;
         }
 
         [HttpGet]
@@ -177,9 +181,11 @@ namespace Mirchi.Services.ShoppingCartAPI.Controllers
                 }
                 checkoutHeader.CartDetails = cart.CartDetails;
                 //var connectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
-                var connectionString = _configuration.GetValue<string>("ServiceBusConnectionStringForQueue");
-                await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue", connectionString);
+                //var connectionString = _configuration.GetValue<string>("ServiceBusConnectionStringForQueue");
+                //await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue", connectionString);
+                _rabbitMqSender.SendMessage(checkoutHeader, "checkoutqueue");
                 await _cartRepository.ClearCart(checkoutHeader.UserId);                
+
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 using Mirchi.MessageBus;
+using Mirchi.Services.OrderAPI.RabbitMqSender;
 using Mirchi.Services.PaymentAPI.Extensions;
 using Mirchi.Services.PaymentAPI.Messaging;
 using PaymentProcessor;
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IProcessPayment,ProcessPayment>();
 builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
 builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+builder.Services.AddSingleton<IRabbitMqPaymentMessageSender, RabbitMqPaymentMessageSender>();
+builder.Services.AddHostedService<RabbitMqOrderConsumer>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
